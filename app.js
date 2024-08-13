@@ -6,7 +6,7 @@ const cors = require('cors');
 const errorsHandler = require('./middlewares/errorsHandler');
 const { hashPassword, comparePassword } = require("./utils/bcrypt");
 const { User } = require("./models");
-const { signToken } = require("./utils/jwt");
+const { signToken, verifyToken } = require("./utils/jwt");
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
@@ -76,9 +76,32 @@ app.get('/heino', (req, res, next) => {
     }
 })
 
+//authentication --Febri
+app.use(async (req, res, next) => {
+    try {
+        const access_token = req.headers.authorization
+        if(!access_token) throw { name: "Unauthorized" };
+
+        const [type, token] = access_token.split(' ');
+        if (type !== `Bearer`) throw { name: `Unauthorized` }
+
+        const payload = verifyToken(token)
+        
+        const user = await User.findByPk(payload.id)
+        if(!user) throw { name: `Unauthorized` }
+
+        req.user = {
+            id: user.id
+        }
+
+        next()
+    } catch (error) {
+        next(error)
+    }
+})
+
+
 // edit user --Febri
-const { User } = require('./models/index');
-const { hashPassword } = require('./utils/bcrypt');
 app.put('/user/edit', async (req, res, next) => {
     try {
         const { id } = req.user;
@@ -94,8 +117,7 @@ app.put('/user/edit', async (req, res, next) => {
 
         const editUser = await user.update({ username, password: hashPassword(password), bio, imageUrl })
 
-        res.send(201).json({ message: "User update success"})
-        next()
+        res.status(201).json({ message: "User update success"})
     } catch (error) {
         next(error)
     }
