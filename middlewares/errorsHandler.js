@@ -10,11 +10,20 @@ module.exports = function errorHandler(err, req, res, next) {
             break;
         case "NoEmail":
             status = 400
-            message = "Email is required"
+            message = "Email required"
             break;
         case "NoPassword":
             status = 400
-            message = "Password is required"
+            message = "Password required"
+            break;
+        case "InvalidToken":
+        case "JsonWebTokenError":
+            status = 401
+            message = "Invalid token"
+            break;
+        case "Invalid email/password":
+            status = 401
+            message = "Invalid email/password"
             break;
     }
     res.status(status).json({ message });
