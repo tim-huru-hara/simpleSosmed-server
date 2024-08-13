@@ -21,9 +21,9 @@ app.get('/heino', (req, res, next) => {
 // edit user --Febri
 const { User } = require('./models/index');
 const { hashPassword } = require('./utils/bcrypt');
-app.put('/user/:id', async (req, res, next) => {
+app.put('/user/edit', async (req, res, next) => {
     try {
-        const { id } = req.params;
+        const { id } = req.user;
 
         const { username, password, bio, imageUrl } = req.body;
         if(!username) throw { name: "EmptyUsername" }
