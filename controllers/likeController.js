@@ -5,7 +5,7 @@ class LikesController {
   static async addLike(req, res, next) {
     try {
       const postId = req.params.id;
-      const { userName } = req.body;
+      const userName = req.user.username;
 
       const post = await Post.findByPk(postId);
       if (!post) {
@@ -13,9 +13,10 @@ class LikesController {
       }
 
       const currentLikes = post.likes || [];
+      if (!post.likes) post.likes = []
       const newLike = {
-        userName,
         likedAt: new Date().toISOString(), 
+        userName,
       };
 
       
@@ -28,10 +29,10 @@ class LikesController {
       }
 
       // Update the post's likes with the new like
-      currentLikes.push(newLike);
+      const updatedLike = [...post.likes, newLike];
 
       // Save the updated post
-      post.likes = currentLikes;
+      post.likes = updatedLike;
       await post.save();
 
       res.status(200).json({

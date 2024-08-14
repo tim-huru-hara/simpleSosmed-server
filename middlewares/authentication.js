@@ -15,7 +15,8 @@ module.exports = async function auth(req, res, next) {
         if (!user) throw { name: `InvalidToken` }
 
         req.user = {
-            id: user.id
+            id: user.id,
+            username: user.username
         }
 
         next()
