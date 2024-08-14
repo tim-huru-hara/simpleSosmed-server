@@ -14,10 +14,10 @@ io.on('connection', (socket) => {
 
     // Listen for new posts
     socket.on('new_post', (post) => {
+        console.log('get hit by client', post)
         // Broadcast the new post to all clients
-        console.log('emit ges', post)
+        console.log('braodcasted to all client', post)
         io.emit('update_posts', post);
-        console.log('braodcasted', post)
     });
 
     // Handle disconnection
