@@ -4,14 +4,15 @@ class CommentsController {
  
   static async addComment(req, res, next) {
     try {
-      const { postId } = req.params;
+      const { id:postId } = req.params;
       const { username, comment } = req.body;
 
       if (!username || !comment) {
         return res.status(400).json({ message: 'Username dan komentar wajib diisi' });
       }
 
-      const post = await Post.findByPk(postId);
+      const post = await Post.findByPk(+postId);
+      if (!post.comments) post.comments = [];
 
       if (!post) {
         return res.status(404).json({ message: 'Postingan tidak ditemukan' });
