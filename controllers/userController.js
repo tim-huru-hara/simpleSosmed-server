@@ -1,5 +1,4 @@
 const { User } = require('../models')
-const { hashPassword } = require('../utils/bcrypt')
 const { hashPassword, comparePassword } = require("../utils/bcrypt");
 const { signToken, verifyToken } = require("../utils/jwt");
 
