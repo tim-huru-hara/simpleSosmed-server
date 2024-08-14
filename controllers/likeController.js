@@ -7,20 +7,18 @@ class LikesController {
       const postId = req.params.id;
       const { userName } = req.body;
 
-      // Get the post by ID
       const post = await Post.findByPk(postId);
       if (!post) {
         return res.status(404).json({ message: 'Post not found' });
       }
 
-      // Get current likes and append the new like
       const currentLikes = post.likes || [];
       const newLike = {
         userName,
-        likedAt: new Date().toISOString(), // Save the time of the like
+        likedAt: new Date().toISOString(), 
       };
 
-      // Check if the user already liked the post
+      
       const alreadyLiked = currentLikes.some(
         (like) => like.userName === userName
       );
@@ -46,26 +44,6 @@ class LikesController {
     }
   }
 
-  static async getLikes(req, res, next) {
-    try {
-      const postId = req.params.id;
-
-      // Get the post by ID
-      const post = await Post.findByPk(postId);
-      if (!post) {
-        return res.status(404).json({ message: 'Post not found' });
-      }
-
-      const likesCount = post.likes.length;
-
-      res.status(200).json({
-        likesCount,
-        likes: post.likes, // Optionally, return the list of likes
-      });
-    } catch (error) {
-      next(error);
-    }
-  }
 }
 
 module.exports = LikesController;
