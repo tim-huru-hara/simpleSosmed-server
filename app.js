@@ -10,7 +10,8 @@ const { signToken, verifyToken } = require("./utils/jwt");
 const { postPost, getPosts } = require("./controllers/postController");
 const { getInfo, EditProfile } = require("./controllers/userController");
 const authentication = require("./middlewares/authentication");
-const { addLike, getLikes } = require("./controllers/likeController");
+const { addLike } = require("./controllers/likeController");
+const { addComment } = require("./controllers/commentsController");
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
@@ -80,7 +81,7 @@ app.post("/post", authentication, postPost);
 app.get("/post", getPosts);
 app.get("/userInfo", authentication, getInfo);
 app.post("/likes/:id", authentication, addLike);
-
+app.post("/comments/:id", authentication, addComment);
 
 // test errorHandler
 app.get("/heino", (req, res, next) => {
