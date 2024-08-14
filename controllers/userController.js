@@ -1,5 +1,7 @@
 const { User } = require('../models')
 const { hashPassword } = require('../utils/bcrypt')
+const { hashPassword, comparePassword } = require("../utils/bcrypt");
+const { signToken, verifyToken } = require("../utils/jwt");
 
 module.exports = class {
     static async getInfo(req, res, next) {
@@ -33,4 +35,61 @@ module.exports = class {
             next(error)
         }
     }
+
+   static async register (req, res, next) {
+        try {
+          let { email, username, password } = req.body;
+          if (!email) {
+            throw { name: "NoEmail" };
+          }
+          if (!password) {
+            throw { name: "NoPassword" };
+          }
+      
+          const user = await User.create({
+            email,
+            username,
+            password: hashPassword(password),
+          });
+      
+          res.status(201).json({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+          });
+        } catch (err) {
+          next(err);
+        }
+      }
+
+      static async login (req, res, next) {
+        try {
+          let { email, password } = req.body;
+          if (!email) {
+            throw { name: "NoEmail" };
+          }
+          if (!password) {
+            throw { name: "NoPassword" };
+          }
+      
+          const user = await User.findOne({ where: { email } });
+          if (!user) {
+            throw { name: "Invalid email/password" };
+          }
+      
+          const checkPass = comparePassword(password, user.password);
+          if (!checkPass) {
+            throw { name: "Invalid email/password" };
+          }
+      
+          const token = signToken({
+            id: user.id,
+          });
+          res.status(200).json({
+            access_token: token,
+          });
+        } catch (err) {
+          next(err);
+        }
+      }
 }

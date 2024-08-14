@@ -28,10 +28,10 @@ class LikesController {
       }
 
       // Update the post's likes with the new like
-      currentLikes.push(newLike);
+      const updatedLike = [...post.likes, newLike];
 
       // Save the updated post
-      post.likes = currentLikes;
+      post.likes = updatedLike;
       await post.save();
 
       res.status(200).json({
