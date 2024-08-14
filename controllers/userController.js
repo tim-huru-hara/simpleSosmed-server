@@ -5,7 +5,7 @@ module.exports = class {
     static async getInfo(req, res, next) {
         try {
             const userInfo = await User.findByPk(req.user.id, {
-                attributes: ['username', 'imageUrl']
+                attributes: ['username', 'imageUrl', 'id']
             })
             res.status(200).json(userInfo)
         } catch (error) {

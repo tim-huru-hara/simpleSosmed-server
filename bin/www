@@ -20,6 +20,13 @@ io.on('connection', (socket) => {
         io.emit('update_posts', post);
     });
 
+    socket.on('new_likes', (post) => {
+        console.log('get hit by client from likes', post)
+        // Broadcast the new post to all clients
+        console.log('braodcasted to all client', post)
+        io.emit('update_posts', post);
+    });
+
     // Handle disconnection
     socket.on('disconnect', () => {
         console.log('User disconnected');
