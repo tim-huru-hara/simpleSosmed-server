@@ -1,0 +1,35 @@
+const app = require('../app')
+const port = process.env.PORT || 3000;
+const { Server } = require("socket.io");
+const { createServer } = require('http')
+const httpServer = createServer(app)
+const io = new Server(httpServer, {
+    cors: {
+        origin: '*'
+    }
+})
+
+io.on('connection', (socket) => {
+    console.log('a user connected', socket.id)
+
+    // Listen for new posts
+    socket.on('new_post', (post) => {
+        console.log('get hit by client', post)
+        // Broadcast the new post to all clients
+        console.log('braodcasted to all client', post)
+        io.emit('update_posts', post);
+    });
+
+    socket.on('new_likes', (post) => {
+        console.log('get hit by client from likes', post)
+        // Broadcast the new post to all clients
+        console.log('braodcasted to all client', post)
+        io.emit('update_posts', post);
+    });
+
+    // Handle disconnection
+    socket.on('disconnect', () => {
+        console.log('User disconnected');
+    });
+})
+httpServer.listen(port, () => console.log('service is running on http://localhost:3000'))
